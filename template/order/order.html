@@ -1,0 +1,370 @@
+{% extends 'head.html' %}
+
+{% block mainbody %}
+
+<div class=" navBar">
+<h3 style="text-align:center">classification</h3>
+<div class="btn-group-vertical navMeun">
+      <button type="button" class="btn btn-primary classNav" onclick="order('dinein')">
+        <div class="">
+            <h2 class="type">Seafood</h2>
+        </div>
+    </button>
+      <button type="button" class="btn btn-primary classNav" onclick="order('dinein')">
+        <div class="">
+            <h2 class="type">Beef</h2>
+        </div>
+    </button>
+      <button type="button" class="btn btn-primary classNav" onclick="order('dinein')">
+        <div class="">
+            <h2 class="type">Pork</h2>
+        </div>
+    </button>
+      <button type="button" class="btn btn-primary classNav" onclick="order('dinein')">
+        <div class="">
+            <h2 class="type">Drink</h2>
+        </div>
+    </button>
+</div>
+
+</div>
+
+<div class="menu">
+
+
+{% comment %} <div class="card menuItem" style="width: 18rem;">
+  <img class="card-img-top" src="/static/img/food.jpg" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">King Prawn</h5>
+    <div class="orderCount">
+        <input type="number" name="count" style="width:30%;"></input>
+        <button class="btn btn-primary order">Order</button>
+    </div>
+  </div>
+</div> {% endcomment %}
+
+
+{% for f in html %}
+
+{{f|safe}}
+{% endfor %} 
+
+
+</div>
+
+
+ <div class="checkinPage">
+
+
+
+
+    <div  id="orderDetail">
+ 
+ 
+    </div >
+    <div class="btn-group checkBTgroup" >
+        <button type="button" class="btn btn-primary" id="payType">Card</button> 
+        <button type="button" class="btn btn-primary" id="viewOrder">View order</button>
+        <button type="button" class="btn btn-primary" id="checkOut">Check out</button> 
+    </div>
+
+     <h3 id="orderAmount">$0</h3>
+
+
+</div> 
+
+
+<div id="orderList" style="display:none;">
+
+   
+    <table class="table"  id="listContainer">
+        <thead>
+        <tr >
+            <th class="foodName">Food</th>
+            <th class="foodCount">Count</th>
+            <th>Operation</th>
+        </tr>
+        </thead>
+        <tbody class="table_body">
+        
+        {% comment %} <tr class="orderItem">
+            <td class="foodName">Mary</td>
+            <td class="foodCount">Moe</td>
+            <td><button class="btn btn-primary">delete</button></td>
+        </tr> {% endcomment %}
+        
+        </tbody>
+  </table>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock mainbody %}
+
+{% block style %}
+.navBar {
+    background-color:#EDEAED;
+    height:100%;
+    width:15%;
+    position:fixed;
+
+}
+
+.classNav {
+    width: 100%;
+}
+
+.navMeun {
+    width:100%;
+}
+
+.menu {
+    width:80%;
+    float:right;
+    margin-top:3%;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.menuItem {
+    margin-right:5%;
+    margin-bottom:3%;
+}
+
+.orderCount {
+    display: flex;
+    justify-content:space-between;
+}
+
+.checkinPage {
+    height:10%;
+    width:100%;
+    position:fixed;
+    bottom:0;
+    background-color:rgb(34,200,22);
+    display:flex;
+
+}
+
+#orderAmount {
+    display:inline-block;
+    
+    font-size:3.4em;
+}
+
+#orderDetail {
+    display: flex;
+    flex-flow: row wrap;
+    width:60%;
+    background-color:yellow;
+}
+
+
+.checkBTgroup {
+    
+}
+
+#orderList{
+    background-color:gray;
+    //max-width:50%;
+    height:50%;
+    width:600px;
+    position:fixed;
+    right:0;
+    //margin-left:-25%;
+    animation:showlist 0.6s;
+    //padding:auto;
+    font-size:1em;
+    border-radius:5px;
+}
+
+@keyframes showlist
+{
+	from {right: -600px;}
+	to {top:0;}
+}
+
+
+@keyframes hidelist
+{
+	from {right: 0;}
+	to {top:-600px;}
+}
+
+
+#listContainer {
+    
+    width:100%;
+    position:absolute;
+    margin: auto;
+}
+
+.orderItem {
+    height:10px;
+}
+
+.foodName {
+    width:70%;
+    margin-left:10%;
+}
+
+.foodCount {
+    width:20%;
+}
+
+{% endblock style %}
+
+
+
+{% block script %}
+
+var ordered = [];
+var payType = "Card";
+var orderAmount = 0;
+
+function add_to_list() {
+
+    $(".table_body").empty();
+
+    for (var i = 0; i < ordered.length; i++) {
+        var item = '<tr class="orderItem">' + 
+                        '<td class="foodName">' + $("#" + ordered[i]['id'] + "-name").html()+ '</td>' + 
+                        '<td class="foodCount">'+ ordered[i]['number'] +'</td>' +
+                        '<td><a class=" deletebtn btn btn-primary " href="javascript:deletebtn('  + ordered[i]['id']+  ')" id="' + ordered[i]['id']+'-delete">delete</a></td>' +
+                    '</tr>'
+        $(".table_body").append(item);
+    }
+
+    
+
+
+}
+
+function update_bottom_detail() {
+
+    var amount = 0.0;
+    var htmlContent = "";
+    for (var i = 0; i < ordered.length; i++) {
+        amount += parseFloat($("#" + ordered[i]["id"] + "-price").val()) * ordered[i]["number"];
+        htmlContent += "<p style='margin-right:10px'>"+ $("#" + ordered[i]["id"] + "-name").html() +"   x " + ordered[i]["number"] +"</p>"
+    }
+    orderAmount = amount;
+    $("#orderAmount").html("$" + amount);
+    $("#orderDetail").html(htmlContent); 
+}
+function deletebtn(id) {
+    console.log(id);
+
+    for (var i = 0; i < ordered.length; i++) {
+        if(ordered[i]['id'] == id) {
+            if (ordered[i]['number'] == 1) {
+                ordered.splice(i,1);
+            } else {
+                ordered[i]['number'] -= 1;
+            }
+
+            break;
+        }
+    }
+
+    update_bottom_detail()
+    add_to_list();
+}
+
+
+$(document).ready(function () {
+    var checkinpageShow = 0;
+    $(".order").click(function() {
+        console.log($(this).attr("id"));
+        var id = $(this).attr("id");
+        var number = 1;
+        if ($("#" + id + "-number").val() != 0) {
+            number = parseInt($("#" + id + "-number").val());
+        }
+        var order = {"id": id, "number": number}
+        var checkOrdered = 0;
+        for (var i = 0; i < ordered.length; i++) {
+            if (ordered[i]["id"] == id) {
+                ordered[i]["number"] += number;
+                checkOrdered = 1;
+            }
+        }
+        if (checkOrdered == 0) {
+            ordered.push(order);
+        }
+
+        
+        update_bottom_detail()
+        add_to_list();
+    })
+
+    $("#viewOrder").click(function () {
+        console.log("a");
+        if (checkinpageShow == 0) {
+            $("#orderList").show();
+            $("#viewOrder").html('Close view');
+            checkinpageShow = 1;
+        } else {
+            $("#orderList").hide();
+            $("#viewOrder").html('View order');
+            
+            checkinpageShow = 0;
+        }
+        
+    });
+
+    $("#payType").click(function () {
+        if (payType == "Card") {
+            payType = "Cash";
+        } else {
+            payType = "Card";
+        }
+        $("#payType").html(payType);
+    });
+
+    $('#checkOut').click(function () {
+        if (ordered.length == 0) {
+            console.log("no order");
+        } else {
+            console.log(ordered);
+            
+            $.ajax({
+
+                
+                url: "/checkout/",
+                method: "POST",
+
+                dataType: "json",
+                data: {"order": JSON.stringify(ordered),
+                        "csrfmiddlewaretoken": "{{csrf_token}}",
+                        "payType" : payType,
+                        "eatType" : "{{eatType}}",
+                        "amount" : orderAmount,
+                        },
+                traditional: true,
+                success: function(res) {
+                    console.log(res);
+                }
+
+            })
+        }
+
+    });
+
+
+
+
+
+
+})
+
+{% endblock script %}

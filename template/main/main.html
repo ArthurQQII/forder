@@ -1,0 +1,57 @@
+{% extends 'head.html' %}
+
+{% block mainbody %}
+<div class="btn-group-vertical main">
+    <button type="button" class="btn btn-primary mb-3" onclick="order('DineIn')">
+        <div class="orderType">
+            <h1 class="type">Dine In</h1>
+        </div>
+    
+    </button>
+    <button type="button" class="btn btn-primary  mb-3" onclick="order('TakeAway')">
+        <div class="orderType">
+            <h1 class="type">Take Away</h1>
+        </div>
+    
+    </button>
+
+    {% comment %} <button type="button" class="btn btn-primary  mb-3">
+        <div class="orderType">
+            <h1>Dine In</h1>
+        </div>
+    
+    </button> {% endcomment %}
+ </div>
+
+{% endblock %}
+
+
+{% block  style%}
+.main {
+    width: 90%;
+    margin: 10% 5%;
+}
+
+.orderType {
+    height:200px;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    
+}
+.type {
+    display:inline-block;
+    font-size:4em;
+}
+ 
+ {% endblock  %}
+
+ {% block script %}
+ 
+ function order(type) {
+     console.log('asdasd');
+     window.location.href="http://127.0.0.1:8000/order?type=" + type;
+ }
+ 
+ {% endblock  %}
+
